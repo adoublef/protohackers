@@ -28,12 +28,7 @@ func serve(ln net.Listener) error {
 func handle(rwc net.Conn) {
 	defer rwc.Close()
 
-	for {
-		if _, err := io.Copy(rwc, rwc); err != nil {
-			// todo...
-			return
-		}
-	}
+	_, _ = io.Copy(rwc, rwc)
 }
 
 func fatal(err error) {
