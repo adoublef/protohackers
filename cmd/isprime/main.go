@@ -36,6 +36,7 @@ func handle(rwc net.Conn) {
 			Number *json.Number `json:"number"`
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
+			log.Printf("malformed payload %v", p)
 			if err.Error() == "EOF" {
 				break
 			}
