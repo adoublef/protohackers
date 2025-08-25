@@ -28,8 +28,8 @@ func handle(rwc net.Conn) {
 	defer rwc.Close()
 
 	var p struct {
-		Method string
-		Number *json.Number
+		Method string       `json:"method"`
+		Number *json.Number `json:"number"`
 	}
 	if err := json.NewDecoder(rwc).Decode(&p); err != nil {
 		log.Printf("malformed payload %v", p)
@@ -42,8 +42,7 @@ func handle(rwc net.Conn) {
 		return
 	}
 
-	e := json.NewEncoder(rwc)
-
+	// {"method":"isPrime","prime":false}
 	var v struct {
 		Method string `json:"method"`
 		Prime  bool   `json:"prime"`
@@ -53,18 +52,18 @@ func handle(rwc net.Conn) {
 	n, err := p.Number.Int64()
 	log.Printf("input %d", n)
 	if err != nil {
-		log.Printf("float response %v", v)
-		_ = e.Encode(v)
-		fmt.Fprintf(rwc, "\n")
+		p, _ := json.Marshal(v)
+		log.Printf("float response %v", string(p))
+		rwc.Write([]byte(string(p) + "\n"))
 		return
 	}
 
 	if isPrime(int(n)) {
 		v.Prime = true
 	}
-	log.Printf("ok response %v", v)
-	_ = e.Encode(v)
-	fmt.Fprintf(rwc, "\n")
+	b, _ := json.Marshal(v)
+	log.Printf("ok response %v", string(b))
+	rwc.Write([]byte(string(b) + "\n"))
 }
 
 func isPrime(n int) bool {
