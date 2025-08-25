@@ -44,7 +44,7 @@ func handle(rwc net.Conn) {
 		if p.Method != "isPrime" || p.Number == nil {
 			log.Printf("malformed payload %v", p)
 			fmt.Fprintf(rwc, "MALFORMED\n")
-			return
+			break
 		}
 		log.Printf("ok payload %v", p)
 
@@ -59,7 +59,7 @@ func handle(rwc net.Conn) {
 			p, _ := json.Marshal(v)
 			log.Printf("float response %q", string(p))
 			rwc.Write([]byte(string(p) + "\n"))
-			return
+			break
 		}
 
 		if isPrime(int(n)) {

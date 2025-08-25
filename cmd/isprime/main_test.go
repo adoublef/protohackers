@@ -18,7 +18,6 @@ func Test_isPrime(t *testing.T) {
 
 	conn, err := net.Dial("tcp", ln.Addr().String())
 	is.OK(t, err) // net.Dial
-	defer conn.Close()
 
 	_, err = conn.Write([]byte(`{"method":"isPrime","number":-1}`))
 	is.OK(t, err)
@@ -28,6 +27,7 @@ func Test_isPrime(t *testing.T) {
 	conn.SetReadDeadline(time.Now().Add(2 * time.Second)) // avoid hanging forever
 	n, err := conn.Read(buf)
 	is.OK(t, err) // Read
+	conn.Close()
 
 	t.Logf("%s", string(buf[:n]))
 }
