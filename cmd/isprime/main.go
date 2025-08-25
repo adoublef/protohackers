@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 	"net"
 )
@@ -48,7 +49,9 @@ func handle(rwc net.Conn) {
 	v.Method = p.Method
 
 	n, err := p.Number.Int64()
+	log.Printf("input %d", n)
 	if err != nil {
+		log.Printf("float response %v", v)
 		_ = e.Encode(v)
 		return
 	}
@@ -56,11 +59,12 @@ func handle(rwc net.Conn) {
 	if isPrime(int(n)) {
 		v.Prime = true
 	}
+	log.Printf("ok response %v", v)
 	_ = e.Encode(v)
 }
 
 func isPrime(n int) bool {
-	for i := 2; i <= int(math.Floor(math.Sqrt(float64(n)))); i++ {
+	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
 		if n%i == 0 {
 			return false
 		}
