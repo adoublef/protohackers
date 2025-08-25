@@ -55,6 +55,7 @@ func handle(rwc net.Conn) {
 	if err != nil {
 		log.Printf("float response %v", v)
 		_ = e.Encode(v)
+		fmt.Fprintf(rwc, "\n")
 		return
 	}
 
@@ -63,6 +64,7 @@ func handle(rwc net.Conn) {
 	}
 	log.Printf("ok response %v", v)
 	_ = e.Encode(v)
+	fmt.Fprintf(rwc, "\n")
 }
 
 func isPrime(n int) bool {
