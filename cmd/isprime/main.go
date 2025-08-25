@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"math"
 	"net"
@@ -26,7 +25,7 @@ func serve(ln net.Listener) error {
 }
 
 func handle(rwc net.Conn) {
-	defer rwc.Close()
+	// defer rwc.Close()
 
 	for {
 		var p struct {
@@ -34,9 +33,6 @@ func handle(rwc net.Conn) {
 			Number *json.Number `json:"number"`
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
-			if err == io.EOF {
-				return
-			}
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
