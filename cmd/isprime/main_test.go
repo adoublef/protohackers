@@ -20,7 +20,7 @@ func Test_isPrime(t *testing.T) {
 	is.OK(t, err) // net.Dial
 	defer conn.Close()
 
-	_, err = conn.Write([]byte(`{"method":"isPrime","number":1}`))
+	_, err = conn.Write([]byte(`{"method":"isPrime","number":2}`))
 	is.OK(t, err)
 
 	// read response

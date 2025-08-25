@@ -28,7 +28,7 @@ func handle(rwc net.Conn) {
 
 	var p struct {
 		Method string
-		Number *int
+		Number *json.Number
 	}
 	if err := json.NewDecoder(rwc).Decode(&p); err != nil {
 		fmt.Fprintf(rwc, "MALFORMED\n")
@@ -39,20 +39,28 @@ func handle(rwc net.Conn) {
 		return
 	}
 
+	e := json.NewEncoder(rwc)
+
 	var v struct {
 		Method string `json:"method"`
 		Prime  bool   `json:"prime"`
 	}
 	v.Method = p.Method
-	e := json.NewEncoder(rwc)
-	if isPrime(*p.Number) {
+
+	n, err := p.Number.Int64()
+	if err != nil {
+		_ = e.Encode(v)
+		return
+	}
+
+	if isPrime(int(n)) {
 		v.Prime = true
 	}
 	_ = e.Encode(v)
 }
 
 func isPrime(n int) bool {
-	for i := 2; i <= int((math.Sqrt(float64(n)))); i++ {
+	for i := 2; i <= int(math.Floor(math.Sqrt(float64(n)))); i++ {
 		if n%i == 0 {
 			return false
 		}
