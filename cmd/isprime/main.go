@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
 	"math"
 	"net"
 )
@@ -35,29 +34,18 @@ func handle(rwc net.Conn) {
 	for sc.Scan() {
 		var p struct {
 			Method string   `json:"method"`
-			Number *float64 `json:"number,omitempty"`
-		}
-
-		toString := func() string {
-			if p.Number != nil {
-				return fmt.Sprintf("method=%s,number=%s", p.Method, (p.Number))
-			} else {
-				return fmt.Sprintf("method=%s", p.Method)
-			}
+			Number *float64 `json:"number,omitempty"` // ""
 		}
 
 		err := json.Unmarshal(sc.Bytes(), &p)
 		if err != nil {
-			log.Printf("mlfrm -- %v", toString())
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
 		if p.Method != "isPrime" || p.Number == nil {
-			log.Printf("inval -- %v", toString())
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
-		log.Printf("input -- %v", toString())
 
 		var v struct {
 			Method string `json:"method"`
@@ -65,12 +53,7 @@ func handle(rwc net.Conn) {
 		}
 		v.Method = p.Method
 
-		if n := *p.Number; !(n == float64(int(n))) {
-			_ = enc.Encode(v)
-			continue
-		}
-
-		if isPrime(int64(*p.Number)) {
+		if isPrime(*p.Number) {
 			v.Prime = true
 		}
 		_ = enc.Encode(v)
@@ -78,9 +61,12 @@ func handle(rwc net.Conn) {
 	_ = sc.Err()
 }
 
-func isPrime(n int64) bool {
+func isPrime(n float64) bool {
+	if n == float64(int(n)) {
+		return false
+	}
 	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
-		if n%int64(i) == 0 {
+		if int64(n)%int64(i) == 0 {
 			return false
 		}
 	}
