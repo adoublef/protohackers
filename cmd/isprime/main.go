@@ -34,8 +34,8 @@ func handle(rwc net.Conn) {
 	sc := bufio.NewScanner(rwc)
 	for sc.Scan() {
 		var p struct {
-			Method string       `json:"method"`
-			Number *json.Number `json:"number"`
+			Method string `json:"method"`
+			Number *int   `json:"number"`
 		}
 
 		if err := json.Unmarshal(sc.Bytes(), &p); err != nil {
@@ -55,14 +55,14 @@ func handle(rwc net.Conn) {
 		}
 		v.Method = p.Method
 
-		n, err := p.Number.Int64()
-		if err != nil {
-			// _ = enc.Encode(v)
-			fmt.Fprintf(rwc, "MALFORMED\n")
-			break
-		}
+		// n, err := p.Number.Int64()
+		// if err != nil {
+		// 	// _ = enc.Encode(v)
+		// 	fmt.Fprintf(rwc, "MALFORMED\n")
+		// 	break
+		// }
 
-		if isPrime(int(n)) {
+		if isPrime(int(*p.Number)) {
 			v.Prime = true
 		}
 		_ = enc.Encode(v)
