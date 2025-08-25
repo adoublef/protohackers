@@ -34,13 +34,13 @@ func handle(rwc net.Conn) {
 	sc := bufio.NewScanner(rwc)
 	for sc.Scan() {
 		var p struct {
-			Method string `json:"method"`
-			Number *int   `json:"number"`
+			Method string       `json:"method"`
+			Number *json.Number `json:"number"`
 		}
 
 		toString := func() string {
 			if p.Number != nil {
-				return fmt.Sprintf("method=%s,number=%d", p.Method, *p.Number)
+				return fmt.Sprintf("method=%s,number=%s", p.Method, p.Number.String())
 			} else {
 				return fmt.Sprintf("method=%s", p.Method)
 			}
@@ -65,27 +65,23 @@ func handle(rwc net.Conn) {
 		}
 		v.Method = p.Method
 
-		// n, err := p.Number.Int64()
-		// if err != nil {
-		// 	// _ = enc.Encode(v)
-		// 	fmt.Fprintf(rwc, "MALFORMED\n")
-		// 	break
-		// }
+		n, err := p.Number.Int64()
+		if err != nil {
+			_ = enc.Encode(v)
+			continue
+		}
 
-		if isPrime(int(*p.Number)) {
+		if isPrime((n)) {
 			v.Prime = true
 		}
 		_ = enc.Encode(v)
 	}
 	_ = sc.Err()
-	// if err := sc.Err(); err != nil {
-	// 	// fmt.Fprintf(rwc, "MALFORMED\n")
-	// }
 }
 
-func isPrime(n int) bool {
+func isPrime(n int64) bool {
 	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
-		if n%i == 0 {
+		if n%int64(i) == 0 {
 			return false
 		}
 	}
