@@ -35,9 +35,6 @@ func handle(rwc net.Conn) {
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
 			log.Printf("malformed payload %v", p)
-			if err.Error() == "EOF" {
-				break
-			}
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
