@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"math"
 	"net"
-
-	"go.adoublef.dev/runtime/debug"
 )
 
 func main() {
