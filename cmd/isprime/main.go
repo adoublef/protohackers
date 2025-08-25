@@ -71,6 +71,7 @@ func handle(rwc net.Conn) {
 	}
 	if err := sc.Err(); err != nil {
 		log.Printf("scan error: %v", err)
+		fmt.Fprintf(rwc, "MALFORMED\n")
 	}
 }
 
