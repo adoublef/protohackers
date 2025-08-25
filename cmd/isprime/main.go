@@ -46,7 +46,7 @@ func handle(rwc net.Conn) {
 		log.Printf("legit payload %s", string(payload[:rn]))
 
 		if err := json.Unmarshal(payload, &p); err != nil {
-			log.Printf("malformed payload %v", p)
+			log.Printf("malformed payload %v, %v", p, err)
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
