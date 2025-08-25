@@ -38,7 +38,9 @@ func handle(rwc net.Conn) {
 			Number *int   `json:"number"`
 		}
 
-		if err := json.Unmarshal(sc.Bytes(), &p); err != nil {
+		err := json.Unmarshal(sc.Bytes(), &p)
+		log.Printf("input -- %v", p)
+		if err != nil {
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
@@ -47,7 +49,6 @@ func handle(rwc net.Conn) {
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
-		log.Printf("payload %v", p)
 
 		var v struct {
 			Method string `json:"method"`
