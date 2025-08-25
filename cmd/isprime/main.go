@@ -10,10 +10,13 @@ import (
 
 func main() {
 	ln, _ := net.Listen("tcp", "0.0.0.0:8080")
+	defer ln.Close()
 	serve(ln)
 }
 
 func serve(ln net.Listener) error {
+	// defer ln.Close()
+
 	for {
 		rwc, err := ln.Accept()
 		if err != nil {
@@ -25,7 +28,7 @@ func serve(ln net.Listener) error {
 }
 
 func handle(rwc net.Conn) {
-	// defer rwc.Close()
+	defer rwc.Close()
 
 	for {
 		var p struct {
@@ -33,6 +36,9 @@ func handle(rwc net.Conn) {
 			Number *json.Number `json:"number"`
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
