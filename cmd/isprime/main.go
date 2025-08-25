@@ -15,12 +15,10 @@ func main() {
 }
 
 func serve(ln net.Listener) error {
-	// defer ln.Close()
-
 	for {
 		rwc, err := ln.Accept()
 		if err != nil {
-			return err
+			continue
 		}
 
 		go handle(rwc)
