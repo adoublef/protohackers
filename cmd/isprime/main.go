@@ -32,9 +32,11 @@ func handle(rwc net.Conn) {
 		Number *json.Number
 	}
 	if err := json.NewDecoder(rwc).Decode(&p); err != nil {
+		log.Printf("malformed payload %v", p)
 		fmt.Fprintf(rwc, "MALFORMED\n")
 		return
 	}
+	log.Printf("input payload %v", p)
 	if p.Method != "isPrime" || p.Number == nil {
 		fmt.Fprintf(rwc, "MALFORMED\n")
 		return
