@@ -39,16 +39,17 @@ func handle(rwc net.Conn) {
 		}
 
 		err := json.Unmarshal(sc.Bytes(), &p)
-		log.Printf("input -- %v", p)
 		if err != nil {
+			log.Printf("mlfrm -- %v", p)
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
 		if p.Method != "isPrime" || p.Number == nil {
-			// log.Printf("malformed payload %v", p)
+			log.Printf("mlfrm -- %v", p)
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
+		log.Printf("input -- %v", p)
 
 		var v struct {
 			Method string `json:"method"`
