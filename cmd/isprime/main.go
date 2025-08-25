@@ -38,6 +38,7 @@ func handle(rwc net.Conn) {
 		}
 
 		if err := json.Unmarshal(sc.Bytes(), &p); err != nil {
+			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
 		if p.Method != "isPrime" || p.Number == nil {
