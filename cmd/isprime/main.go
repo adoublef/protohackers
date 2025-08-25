@@ -38,18 +38,26 @@ func handle(rwc net.Conn) {
 			Number *int   `json:"number"`
 		}
 
+		toString := func() string {
+			if p.Number != nil {
+				return fmt.Sprintf("method=%s,number=%d", p.Method, *p.Number)
+			} else {
+				return fmt.Sprintf("method=%s", p.Method)
+			}
+		}
+
 		err := json.Unmarshal(sc.Bytes(), &p)
 		if err != nil {
-			log.Printf("mlfrm -- %v", p)
+			log.Printf("mlfrm -- %v", toString())
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
 		if p.Method != "isPrime" || p.Number == nil {
-			log.Printf("mlfrm -- %v", p)
+			log.Printf("mlfrm -- %v", toString())
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
-		log.Printf("input -- %v", p)
+		log.Printf("input -- %v", toString())
 
 		var v struct {
 			Method string `json:"method"`
