@@ -57,25 +57,19 @@ func handle(rwc net.Conn) {
 
 		n, err := p.Number.Int64()
 		if err != nil {
-			// b, _ := json.Marshal(v)
-			// log.Printf("float response %q", string(p))
-			// rwc.Write([]byte(string(b) + "\n"))
-			enc.Encode(v)
+			_ = enc.Encode(v)
 			break
 		}
 
 		if isPrime(int(n)) {
 			v.Prime = true
 		}
-		enc.Encode(v)
-		// b, _ := json.Marshal(v)
-		// log.Printf("ok response %q", string(b))
-		// rwc.Write([]byte(string(b) + "\n"))
+		_ = enc.Encode(v)
 	}
-	if err := sc.Err(); err != nil {
-		// log.Printf("scan error: %v", err)
-		fmt.Fprintf(rwc, "MALFORMED\n")
-	}
+	_ = sc.Err()
+	// if err := sc.Err(); err != nil {
+	// 	// fmt.Fprintf(rwc, "MALFORMED\n")
+	// }
 }
 
 func isPrime(n int) bool {
