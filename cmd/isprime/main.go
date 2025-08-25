@@ -35,7 +35,7 @@ func handle(rwc net.Conn) {
 			Number *json.Number `json:"number"`
 		}
 		var payload []byte
-		n, err := rwc.Read(payload)
+		rn, err := rwc.Read(payload)
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -43,7 +43,7 @@ func handle(rwc net.Conn) {
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
-		log.Printf("legit payload %s", string(payload[:n]))
+		log.Printf("legit payload %s", string(payload[:rn]))
 
 		if err := json.Unmarshal(payload, &p); err != nil {
 			log.Printf("malformed payload %v", p)
@@ -65,7 +65,7 @@ func handle(rwc net.Conn) {
 		v.Method = p.Method
 
 		n, err := p.Number.Int64()
-		log.Printf("input %d", n)
+		log.Printf("input %d", rn)
 		if err != nil {
 			p, _ := json.Marshal(v)
 			log.Printf("float response %q", string(p))
