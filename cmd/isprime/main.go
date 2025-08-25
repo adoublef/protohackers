@@ -53,7 +53,7 @@ func handle(rwc net.Conn) {
 	log.Printf("input %d", n)
 	if err != nil {
 		p, _ := json.Marshal(v)
-		log.Printf("float response %v", string(p))
+		log.Printf("float response %q", string(p))
 		rwc.Write([]byte(string(p) + "\n"))
 		return
 	}
@@ -62,7 +62,7 @@ func handle(rwc net.Conn) {
 		v.Prime = true
 	}
 	b, _ := json.Marshal(v)
-	log.Printf("ok response %v", string(b))
+	log.Printf("ok response %q", string(b))
 	rwc.Write([]byte(string(b) + "\n"))
 }
 
