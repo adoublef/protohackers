@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math"
 	"net"
@@ -33,12 +34,15 @@ func handle(rwc net.Conn) {
 			Number *json.Number `json:"number"`
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
-			log.Printf("malformed payload %v", p)
+			if err == io.EOF {
+				break
+			}
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
 		log.Printf("input payload %v", p)
 		if p.Method != "isPrime" || p.Number == nil {
+			log.Printf("malformed payload %v", p)
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
