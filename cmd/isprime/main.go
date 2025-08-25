@@ -34,7 +34,7 @@ func handle(rwc net.Conn) {
 			Method string       `json:"method"`
 			Number *json.Number `json:"number"`
 		}
-		var payload []byte
+		var payload = make([]byte, 32*1024)
 		rn, err := rwc.Read(payload)
 		if err != nil {
 			if err == io.EOF {
