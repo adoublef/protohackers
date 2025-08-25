@@ -57,7 +57,8 @@ func handle(rwc net.Conn) {
 
 		n, err := p.Number.Int64()
 		if err != nil {
-			_ = enc.Encode(v)
+			// _ = enc.Encode(v)
+			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
 
