@@ -35,7 +35,7 @@ func handle(rwc net.Conn) {
 		}
 		if err := json.NewDecoder(rwc).Decode(&p); err != nil {
 			if err == io.EOF {
-				break
+				return
 			}
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
