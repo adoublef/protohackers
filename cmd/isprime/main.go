@@ -53,7 +53,7 @@ func handle(rwc net.Conn) {
 			break
 		}
 		if p.Method != "isPrime" || p.Number == nil {
-			log.Printf("mlfrm -- %v", toString())
+			log.Printf("inval -- %v", toString())
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			break
 		}
