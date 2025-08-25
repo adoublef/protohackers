@@ -34,13 +34,13 @@ func handle(rwc net.Conn) {
 	sc := bufio.NewScanner(rwc)
 	for sc.Scan() {
 		var p struct {
-			Method string       `json:"method"`
-			Number *json.Number `json:"number"`
+			Method string   `json:"method"`
+			Number *float64 `json:"number,omitempty"`
 		}
 
 		toString := func() string {
 			if p.Number != nil {
-				return fmt.Sprintf("method=%s,number=%s", p.Method, p.Number.String())
+				return fmt.Sprintf("method=%s,number=%s", p.Method, (p.Number))
 			} else {
 				return fmt.Sprintf("method=%s", p.Method)
 			}
@@ -65,13 +65,12 @@ func handle(rwc net.Conn) {
 		}
 		v.Method = p.Method
 
-		n, err := p.Number.Int64()
-		if err != nil {
+		if n := *p.Number; !(n == float64(int(n))) {
 			_ = enc.Encode(v)
 			continue
 		}
 
-		if isPrime((n)) {
+		if isPrime(int64(*p.Number)) {
 			v.Prime = true
 		}
 		_ = enc.Encode(v)
