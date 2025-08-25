@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"math"
 	"net"
@@ -29,28 +29,17 @@ func serve(ln net.Listener) error {
 func handle(rwc net.Conn) {
 	defer rwc.Close()
 
-	for {
+	sc := bufio.NewScanner(rwc)
+
+	for sc.Scan() {
 		var p struct {
 			Method string       `json:"method"`
 			Number *json.Number `json:"number"`
 		}
-		var payload = make([]byte, 32*1024)
-		rn, err := rwc.Read(payload)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			fmt.Fprintf(rwc, "MALFORMED\n")
-			return
-		}
-		log.Printf("legit payload %s", string(payload[:rn]))
 
-		if err := json.Unmarshal(payload, &p); err != nil {
-			log.Printf("malformed payload %v, %v", p, err)
-			fmt.Fprintf(rwc, "MALFORMED\n")
-			return
+		if err := json.Unmarshal(sc.Bytes(), &p); err != nil {
+			break
 		}
-		log.Printf("input payload %v", p)
 		if p.Method != "isPrime" || p.Number == nil {
 			log.Printf("malformed payload %v", p)
 			fmt.Fprintf(rwc, "MALFORMED\n")
@@ -65,7 +54,6 @@ func handle(rwc net.Conn) {
 		v.Method = p.Method
 
 		n, err := p.Number.Int64()
-		log.Printf("input %d", rn)
 		if err != nil {
 			p, _ := json.Marshal(v)
 			log.Printf("float response %q", string(p))
@@ -79,6 +67,9 @@ func handle(rwc net.Conn) {
 		b, _ := json.Marshal(v)
 		log.Printf("ok response %q", string(b))
 		rwc.Write([]byte(string(b) + "\n"))
+	}
+	if err := sc.Err(); err != nil {
+		log.Printf("scan error: %v", err)
 	}
 }
 
