@@ -46,8 +46,8 @@ func handle(rwc net.Conn) {
 			fmt.Fprintf(rwc, "MALFORMED\n")
 			return
 		}
+		log.Printf("ok payload %v", p)
 
-		// {"method":"isPrime","prime":false}
 		var v struct {
 			Method string `json:"method"`
 			Prime  bool   `json:"prime"`
